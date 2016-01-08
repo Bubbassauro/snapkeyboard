@@ -1,5 +1,7 @@
-<html>
-<head>
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"><head>
+  <meta http-equiv="content-type"
+        content="application/xhtml+xml; charset=utf-8"/>
   <script src="snap.svg-min.js"></script>
   <style type="text/css">
   .letter {
@@ -10,25 +12,36 @@
 </head>
 <body>
 <script type="text/javascript">
+var normal_button = {
+  width: 26,
+  height: 23
+};
 var Key = function(s, character, x, y) {
   var _button;
   var _letter;
   var _key;
 
-  _button = s.rect(0, 0, 20, 20);
+  _button = s.rect(0, 0, normal_button.width, normal_button.height);
   _button.attr({
       fill: "#F2F7F1",
       stroke: "#88aca0",
       strokeWidth: "1",
-      transform: "t0.5 0.5"
+      transform: "t0.5 0.5",
+      cursor: "hand"
   });
 
-  _letter = s.text(3,15,character.lower);
+  _letter = s.text(4, 17, character.lower);
   _letter.attr({
-    'cursor': 'default',
+    'cursor': 'hand',
     'class':'letter',
     fill: "#006600"
   });
+
+  // Reposition text in button
+  var left = ((_button.node.clientWidth - _letter.node.clientWidth) / 2);
+  var top = ((_button.node.clientHeight - _letter.node.clientHeight) / 2);
+  // _letter.transform("t" + left + "," + top);
+  // _letter.attr({x:left,y:top});
 
   this.key = s.g(_button, _letter);
   this.key.transform("t" + x + "," + y);
@@ -56,49 +69,91 @@ Key.prototype.transform = function(t) {
    this.key.transform(t);
 }
 
-var s = Snap(600, 200);
-var offset = 24;
-var r1 = [
-  {lower: "`", upper: "\"", y: 10 },
-  {lower: "!", y: 10},
-  {lower: "@", y: 10},
-  {lower: "#", y: 10},
-  {lower: "$", y: 10},
-  {lower: "%", y: 10},
-  {lower: "¨", y: 10},
-  {lower: "&", y: 10},
-  {lower: "*", y: 10},
-  {lower: "(", y: 10},
-  {lower: ")", y: 10},
-  {lower: "_", upper: "-", y: 10},
-  {lower: "=", upper: "+", y: 10}
+var number_start = 454;
+var keys = [
+  {lower: "`", upper: "\"", row: 1, x_start: 10},
+  {lower: "!", row: 1},
+  {lower: "@", row: 1},
+  {lower: "#", row: 1},
+  {lower: "$", row: 1},
+  {lower: "%", row: 1},
+  {lower: "¨", row: 1},
+  {lower: "&", row: 1},
+  {lower: "*", row: 1},
+  {lower: "(", row: 1},
+  {lower: ")", row: 1},
+  {lower: "_", upper: "-", row: 1},
+  {lower: "=", upper: "+", row: 1},
+  // Second row
+  {lower: "q", upper: "Q", row: 2, x_start: 25},
+  {lower: "w", upper: "W", row: 2},
+  {lower: "r", upper: "R", row: 2},
+  {lower: "e", upper: "E", row: 2},
+  {lower: "t", upper: "T", row: 2},
+  {lower: "y", upper: "Y", row: 2},
+  {lower: "u", upper: "U", row: 2},
+  {lower: "i", upper: "I", row: 2},
+  {lower: "o", upper: "O", row: 2},
+  {lower: "p", upper: "P", row: 2},
+  {lower: "`", upper: "´", row: 2},
+  {lower: "[", upper: "{", row: 2},
+  {lower: "7", row: 2, x_start: number_start},
+  {lower: "8", row: 2},
+  {lower: "9", row: 2},
+  // Third row
+  {lower: "\\", row: 3, x_start: 15},
+  {lower: "a", upper: "A", row: 3},
+  {lower: "s", upper: "S", row: 3},
+  {lower: "d", upper: "D", row: 3},
+  {lower: "f", upper: "F", row: 3},
+  {lower: "g", upper: "G", row: 3},
+  {lower: "h", upper: "H", row: 3},
+  {lower: "j", upper: "J", row: 3},
+  {lower: "k", upper: "K", row: 3},
+  {lower: "l", upper: "L", row: 3},
+  {lower: "ç", upper: "Ç", row: 3},
+  {lower: "~", upper: "^", row: 3},
+  {lower: "]", upper: "}", row: 3},
+  {lower: "4", row: 3, x_start: number_start},
+  {lower: "5", row: 3},
+  {lower: "6", row: 3},
+  // Fourth row
+  {lower: "z", upper: "Z", row: 4, x_start: 60},
+  {lower: "x", upper: "X", row: 4},
+  {lower: "c", upper: "C", row: 4},
+  {lower: "v", upper: "V", row: 4},
+  {lower: "b", upper: "B", row: 4},
+  {lower: "n", upper: "N", row: 4},
+  {lower: "m", upper: "M", row: 4},
+  {lower: ",", upper: "<", row: 4},
+  {lower: ".", upper: ">", row: 4},
+  {lower: ";", upper: ":", row: 4},
+  {lower: "/", upper: "?", row: 4},
+  {lower: "1", row: 4, x_start: number_start},
+  {lower: "2", row: 4},
+  {lower: "3", row: 4}
 ];
-var r2 = [
-  {lower: "q", upper: "Q"},
-  {lower: "w", upper: "W"},
-  {lower: "e", upper: "E"},
-  {lower: "r", upper: "R"},
-  {lower: "t", upper: "T"},
-  {lower: "y", upper: "Y"},
-  {lower: "u", upper: "U"},
-  {lower: "i", upper: "I"},
-  {lower: "o", upper: "O"},
-  {lower: "p", upper: "P"}
-];
-var x = 10;
-for(var letter in r1) {
-  new Key(s, r1[letter], x, 10);
-  x += offset;
-}
-x = 30;
-for(var letter in r2) {
-  new Key(s, r2[letter], x, 33);
-  x += offset;
-}
 
+var s = Snap(600, 200);
+var x_offset = 31;
+var y_offset = 28;
+var y_start = 10;
+var x;
+
+for(var letter in keys) {
+  if (keys[letter].x_start) {
+    x = keys[letter].x_start;
+  }
+  var y = y_start + (keys[letter].row * y_offset);
+  new Key(s, keys[letter], x, y);
+  x += x_offset;
+}
 
 
 </script>
-<span class="letter">test</span>
+<p class="letter">test</p>
+<p>
+  <img src="keyboard.png">
+</p>
 </body>
 </html>
