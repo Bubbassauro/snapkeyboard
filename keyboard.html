@@ -1,0 +1,104 @@
+<html>
+<head>
+  <script src="snap.svg-min.js"></script>
+  <style type="text/css">
+  .letter {
+    font-family: Verdana;
+    font-weight: bolder;
+  }
+  </style>
+</head>
+<body>
+<script type="text/javascript">
+var Key = function(s, character, x, y) {
+  var _button;
+  var _letter;
+  var _key;
+
+  _button = s.rect(0, 0, 20, 20);
+  _button.attr({
+      fill: "#F2F7F1",
+      stroke: "#88aca0",
+      strokeWidth: "1",
+      transform: "t0.5 0.5"
+  });
+
+  _letter = s.text(3,15,character.lower);
+  _letter.attr({
+    'cursor': 'default',
+    'class':'letter',
+    fill: "#006600"
+  });
+
+  this.key = s.g(_button, _letter);
+  this.key.transform("t" + x + "," + y);
+
+  this.key.hover(function() {
+    this[0].attr({
+      stroke: "#f00",
+    });
+    this[0].transform('s1 1');
+  }, function() {
+    this[0].attr({
+      stroke: "#88aca0"
+    });
+    this[0].transform('t0.5 0.5');
+  });
+  this.key.mousedown(function() {
+    this[0].attr({
+      stroke: "#c00"
+    });
+    this[0].transform('t0.5 0.5');
+  });
+};
+
+Key.prototype.transform = function(t) {
+   this.key.transform(t);
+}
+
+var s = Snap(600, 200);
+var offset = 24;
+var r1 = [
+  {lower: "`", upper: "\"", y: 10 },
+  {lower: "!", y: 10},
+  {lower: "@", y: 10},
+  {lower: "#", y: 10},
+  {lower: "$", y: 10},
+  {lower: "%", y: 10},
+  {lower: "¨", y: 10},
+  {lower: "&", y: 10},
+  {lower: "*", y: 10},
+  {lower: "(", y: 10},
+  {lower: ")", y: 10},
+  {lower: "_", upper: "-", y: 10},
+  {lower: "=", upper: "+", y: 10}
+];
+var r2 = [
+  {lower: "q", upper: "Q"},
+  {lower: "w", upper: "W"},
+  {lower: "e", upper: "E"},
+  {lower: "r", upper: "R"},
+  {lower: "t", upper: "T"},
+  {lower: "y", upper: "Y"},
+  {lower: "u", upper: "U"},
+  {lower: "i", upper: "I"},
+  {lower: "o", upper: "O"},
+  {lower: "p", upper: "P"}
+];
+var x = 10;
+for(var letter in r1) {
+  new Key(s, r1[letter], x, 10);
+  x += offset;
+}
+x = 30;
+for(var letter in r2) {
+  new Key(s, r2[letter], x, 33);
+  x += offset;
+}
+
+
+
+</script>
+<span class="letter">test</span>
+</body>
+</html>
