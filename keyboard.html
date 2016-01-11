@@ -12,37 +12,49 @@
 </head>
 <body>
 <script type="text/javascript">
-var normal_button = {
+var button_settings = {
   width: 26,
-  height: 23
+  height: 23,
+  fill: "#F2F7F1",
+  stroke: "#88aca0",
+  strokeWidth: "1",
+  transform: "t0.5 0.5",
+  cursor: "hand"
 };
+
+var letter_settings = {
+  left_offset : 13,
+  top_offset : 26,
+  'cursor': 'hand',
+  'class':'letter',
+  'fill': '#006600'
+}
+
+/**
+ * Draws a standard rectangular key on the keyboard
+ *
+ * @s         {Snap}          Snap canvas to draw on
+ * @character {string}        Button text
+ * @x         {int}           Key distance from left
+ * @y         {int}           Key distance from top
+ */
 var Key = function(s, character, x, y) {
   var _button;
   var _letter;
   var _key;
 
-  _button = s.rect(0, 0, normal_button.width, normal_button.height);
-  _button.attr({
-      fill: "#F2F7F1",
-      stroke: "#88aca0",
-      strokeWidth: "1",
-      transform: "t0.5 0.5",
-      cursor: "hand"
-  });
+  _button = s.rect();
+  _button.attr(button_settings);
 
-  _letter = s.text(4, 17, character.lower);
-  _letter.attr({
-    'cursor': 'hand',
-    'class':'letter',
-    fill: "#006600"
-  });
+  _letter = s.text(0, 0, character.lower);
+  _letter.attr(letter_settings);
 
   // Reposition text in button
-  var left = ((_button.node.clientWidth - _letter.node.clientWidth) / 2);
-  var top = ((_button.node.clientHeight - _letter.node.clientHeight) / 2);
-  // _letter.transform("t" + left + "," + top);
-  // _letter.attr({x:left,y:top});
+  var left = ((_button.node.clientWidth - _letter.node.clientWidth) / 2) + letter_settings.left_offset;
+  var top = ((_button.node.clientHeight - _letter.node.clientHeight) / 2) + letter_settings.top_offset;
+  _letter.transform("t" + left + "," + top);
 
+  // Position the key
   this.key = s.g(_button, _letter);
   this.key.transform("t" + x + "," + y);
 
@@ -135,6 +147,8 @@ var keys = [
 ];
 
 var s = Snap(600, 200);
+
+// Create standard buttons
 var x_offset = 31;
 var y_offset = 28;
 var y_start = 10;
@@ -148,6 +162,23 @@ for(var letter in keys) {
   new Key(s, keys[letter], x, y);
   x += x_offset;
 }
+
+// Draw non-standard keys
+var enter = s.polygon(
+  397, 66,
+  442, 66,
+  442, 117,
+  418, 117,
+  418, 89,
+  397, 89);
+enter.attr({
+  fill: button_settings.fill,
+  stroke: button_settings.stroke,
+  strokeWidth: button_settings.strokeWidth,
+  transform: button_settings.transform,
+  cursor: button_settings.cursor
+})
+
 
 
 </script>
