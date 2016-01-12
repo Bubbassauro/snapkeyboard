@@ -4,9 +4,36 @@
         content="application/xhtml+xml; charset=utf-8"/>
   <script src="snap.svg-min.js"></script>
   <style type="text/css">
-  .letter {
+  .letter text {
     font-family: Verdana;
     font-weight: bolder;
+    color: #006600;
+    fill: #006600;
+    cursor: pointer;
+    stroke-width: 0;
+  }
+  .key {
+      fill: #F2F7F1;
+      background-color: #F2F7F1;
+      border: #88aca0;
+      stroke: #88aca0;
+      stroke-width: 1px;
+      cursor: pointer;
+  }
+  .small-text text {
+    font-size: .75em;
+    padding-bottom: 4px;
+  }
+  .ok rect, .ok polygon {
+    fill: #FECB00;
+    background-color: #FECB00;
+  }
+  .ok polygon.arrow, polygon.arrow {
+    fill: #060;
+    stroke: #060;
+  }
+  .help rect {
+    fill: #BDDBB7;
   }
   </style>
 </head>
@@ -17,86 +44,15 @@
     <img src="keyboard.png">
   </p>
 <script type="text/javascript">
-var DeltaKeyboard = function(objectId) {
+var VirtualKeyboard = function(objectId) {
   this.margin = 5;
   this.button_settings = {
     'width': 26,
     'height': 23,
-    'strokeWidth': 1,
     'transform': 't0.5 0.5',
   };
 
-  this.s = Snap(objectId);
-  this.drawSquareKeys();
-  this.drawNonStandardKeys();
-}
-
-DeltaKeyboard.prototype.addKeyHandlers = function(obj) {
-  var key_settings = {
-    fill: "#F2F7F1",
-    stroke: "#88aca0",
-    cursor: "hand"
-  };
-
-  obj.attr(key_settings);
-  obj[0].transform('t0.5 0.5');
-
-  obj.hover(function() {
-    this[0].attr({
-      stroke: "#f00",
-    });
-    this[0].transform('s1 1');
-  }, function() {
-    this[0].attr({
-      stroke: "#88aca0"
-    });
-    this[0].transform('t0.5 0.5');
-  });
-  obj.mousedown(function() {
-    this[0].attr({
-      stroke: "#c00"
-    });
-    this[0].transform('t0.5 0.5');
-  });
-};
-
-DeltaKeyboard.prototype.createSquareKey = function(character, x, y, button_width) {
-
-  var letter_settings = {
-    'left_offset' : 13,
-    'top_offset' : 26,
-    'cursor': 'hand',
-    'class':'letter',
-    'fill': '#006600',
-    'strokeWidth': "0"
-  };
-
-  var _button;
-  var _letter;
-  var _key;
-
-  _button = this.s.rect();
-  _button.attr(this.button_settings);
-
-  _letter = this.s.text(0, 0, character.lower);
-  _letter.attr(letter_settings);
-
-  // Reposition text in button
-  var left = ((_button.node.clientWidth - _letter.node.clientWidth) / 2) + letter_settings.left_offset;
-  var top = ((_button.node.clientHeight - _letter.node.clientHeight) / 2) + letter_settings.top_offset;
-  _letter.transform("t" + left + "," + top);
-
-  // Position the key
-  _key = this.s.g(_button, _letter);
-  _key.transform("t" + x + "," + y);
-
-  this.addKeyHandlers(_key);
-};
-
-DeltaKeyboard.prototype.drawSquareKeys = function() {
-  var y_offset = this.button_settings.height + this.margin;
-  var y_start = 10;
-  var num_x_offset = 454;
+  this.num_x_offset = 454; // Position from the left where the numeric keyboard starts
   this.square_keys = [
     {lower: "`", upper: "\"", row: 1, x_start: 4},
     {lower: "!", row: 1},
@@ -111,6 +67,8 @@ DeltaKeyboard.prototype.drawSquareKeys = function() {
     {lower: ")", row: 1},
     {lower: "_", upper: "-", row: 1},
     {lower: "=", upper: "+", row: 1},
+    {lower: "", row: 1, width: 35},
+    {lower: "Help", row: 1, x_start: this.num_x_offset, width: 88, 'class': 'small-text help', 'left_offset': 4},
     // Second row
     {lower: "q", upper: "Q", row: 2, x_start: 25},
     {lower: "w", upper: "W", row: 2},
@@ -124,7 +82,7 @@ DeltaKeyboard.prototype.drawSquareKeys = function() {
     {lower: "p", upper: "P", row: 2},
     {lower: "`", upper: "´", row: 2},
     {lower: "[", upper: "{", row: 2},
-    {lower: "7", row: 2, x_start: num_x_offset},
+    {lower: "7", row: 2, x_start: this.num_x_offset},
     {lower: "8", row: 2},
     {lower: "9", row: 2},
     // Third row
@@ -141,11 +99,12 @@ DeltaKeyboard.prototype.drawSquareKeys = function() {
     {lower: "ç", upper: "Ç", row: 3},
     {lower: "~", upper: "^", row: 3},
     {lower: "]", upper: "}", row: 3},
-    {lower: "4", row: 3, x_start: num_x_offset},
+    {lower: "4", row: 3, x_start: this.num_x_offset},
     {lower: "5", row: 3},
     {lower: "6", row: 3},
     // Fourth row
-    {lower: "z", upper: "Z", row: 4, x_start: 63},
+    {lower: "Shift", row: 4, x_start: 15, width: 43, 'class': 'small-text', 'left_offset': 4},
+    {lower: "z", upper: "Z", row: 4},
     {lower: "x", upper: "X", row: 4},
     {lower: "c", upper: "C", row: 4},
     {lower: "v", upper: "V", row: 4},
@@ -156,84 +115,122 @@ DeltaKeyboard.prototype.drawSquareKeys = function() {
     {lower: ".", upper: ">", row: 4},
     {lower: ";", upper: ":", row: 4},
     {lower: "/", upper: "?", row: 4},
-    {lower: "1", row: 4, x_start: num_x_offset},
+    {lower: "", row: 4, width: 38},
+    {lower: "1", row: 4, x_start: this.num_x_offset},
     {lower: "2", row: 4},
-    {lower: "3", row: 4}
+    {lower: "3", row: 4},
+    // Fifth row
+    {lower: "Caps Lock", row: 5, x_start: 15, width: 87, 'class': 'small-text', 'left_offset': 11},
+    {lower: "SPACE", row: 5, width: 335, 'class': 'small-text', 'left_offset': 4},
+    {lower: "0", row: 5, x_start: this.num_x_offset, width: 57},
+    {lower: "Ok", row: 5, 'class': 'small-text ok', 'left_offset': 3}
   ];
 
-  var x;
+  this.s = Snap(objectId);
+  this.s.attr({ 'class': 'letter' });
+  this.drawSquareKeys();
+  this.drawNonStandardKeys();
+}
+
+VirtualKeyboard.prototype.addKeyHandlers = function(obj) {
+  obj[0].transform('t0.5 0.5');
+  obj.hover(function() {
+    this[0].attr({'stroke': '#f00'});
+    this[0].transform('s1 1');
+  }, function() {
+    this[0].attr({'stroke': '#88aca0'});
+    this[0].transform('t0.5 0.5');
+  });
+  obj.mousedown(function() {
+    this[0].attr({stroke: "#c00"});
+    this[0].transform('t0.5 0.5');
+  });
+};
+
+VirtualKeyboard.prototype.createSquareKey = function(iKey) {
+  var letter_settings = {
+    'top_offset' : 3,
+  };
+
+  var _button = this.s.rect();
+  _button.attr(this.button_settings);
+  _button.attr({ width : this.square_keys[iKey].width });
+
+  var _letter = this.s.text(0, 0, this.square_keys[iKey].lower);
+
+  // Reposition text in button
+  var left_offset = (this.square_keys[iKey].left_offset ? this.square_keys[iKey].left_offset : 0);
+  var letter_rect = this.s.g(_letter).node.getBoundingClientRect();
+  var left = ((parseInt(_button.attr('width')) - letter_rect.width) / 2) + left_offset;
+  var top = (parseInt(_button.attr('height')) - (letter_rect.height / 2) + letter_settings.top_offset);
+  _letter.transform("t" + left + "," + top);
+
+  // Position the key
+  var _key = this.s.g(_button, _letter);
+  if (this.square_keys[iKey].class) {
+    _key.attr({ 'class' : 'key ' + this.square_keys[iKey].class });
+  }
+  else {
+    _key.attr({ 'class' : 'key' });
+  }
+  _key.transform("t" + this.square_keys[iKey].x + "," + this.square_keys[iKey].y);
+
+  this.addKeyHandlers(_key);
+};
+
+VirtualKeyboard.prototype.drawSquareKeys = function() {
+  var y_offset = this.button_settings.height + this.margin;
+  var y_start = 10;
+
+  // Calculate x and y to position buttons
   for(var letter in this.square_keys) {
-    if (this.square_keys[letter].x_start) {
-      x = this.square_keys[letter].x_start;
+    var key = this.square_keys[letter];
+    if (key.x_start) {
+      key.x = key.x_start;
     }
-    var y = y_start + (this.square_keys[letter].row * y_offset);
-    this.createSquareKey(this.square_keys[letter], x, y);
-    x += this.button_settings.width + this.margin;
+    else {
+      var previous_key = this.square_keys[letter-1];
+      key.x = previous_key.x + previous_key.width + this.margin;
+    }
+    key.y = y_start + (key.row * y_offset);
+    if (!key.width) {
+        // Use default width if not specified
+        key.width = this.button_settings.width;
+    }
+
+    // Create key
+    this.createSquareKey(letter);
   }
 };
 
-DeltaKeyboard.prototype.drawNonStandardKeys = function() {
+VirtualKeyboard.prototype.drawNonStandardKeys = function() {
   // Draw non-standard keys
-  var enter = this.s.polygon(
-    397, 66,
-    442, 66,
-    442, 117,
-    418, 117,
-    418, 89,
-    397, 89);
+  var enter = this.s.polygon(397, 66, 442, 66, 442, 117, 418, 117, 418, 89, 397, 89);
   enter.transform('t0.5 0.5');
-  enter.attr({ 'fill': '#FECB00' });
-  this.addKeyHandlers(this.s.g(enter));
+  var enter_text = this.s.text(410, 83, "Ok");
+  var arrow = this.s.polygon(6, 26, 9, 30, 2, 25, 9, 20, 6, 25, 14, 25, 14, 12, 14, 25);
+  arrow.attr({
+    'class': 'arrow',
+    'transform' : 't421 80',
+  });
+  var enter_g = this.s.g(enter, enter_text, arrow);
+  enter_g.attr({ 'class': 'key ok small-text' });
+  this.addKeyHandlers(enter_g);
 
-  var leftShift = this.s.polygon(
-      15, 122,
-      58, 122,
-      58, 145,
-      15, 145
-  );
-  this.addKeyHandlers(this.s.g(leftShift));
+  var shift_arrow = this.s.polygon(5,  6, 0, 10, 5, 3, 10, 10, 5, 6, 5, 16);
+  shift_arrow.attr({
+    'class' : 'arrow',
+    'transform' : 't419 125'
+  });
 
-  var capsLock = this.s.polygon(
-    404, 122,
-    442, 122,
-    442, 145,
-    404, 145
-  );
-  this.addKeyHandlers(this.s.g(capsLock));
-
-  var backspace = this.s.polygon(
-
-  );
-  this.addKeyHandlers(this.s.g(backspace));
-
-  var space = this.s.polygon(
-
-  );
-  this.addKeyHandlers(this.s.g(space));
-
-  var rightShift = this.s.polygon(
-
-  );
-  this.addKeyHandlers(this.s.g(rightShift));
-
-  var help = this.s.polygon(
-
-  );
-  this.addKeyHandlers(this.s.g(help));
-
-  var numZero = this.s.polygon(
-
-  );
-  this.addKeyHandlers(this.s.g(numZero));
-
-  var numOk = this.s.polygon(
-
-  );
-  this.addKeyHandlers(this.s.g(numOk));
-
+  var backspace_arrow = this.s.polygon(6, 5, 9, 10, 2, 5, 9, 0, 6, 5, 27, 5);
+  backspace_arrow.attr({
+    'class' : 'arrow',
+    'transform' : 't410 45'
+  });
 };
 
-var keyboard = new DeltaKeyboard("#keyboard");
+var keyboard = new VirtualKeyboard("#keyboard");
 
 </script>
 
