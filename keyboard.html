@@ -67,8 +67,8 @@ var VirtualKeyboard = function(objectId) {
     {lower: ")", row: 1},
     {lower: "_", upper: "-", row: 1},
     {lower: "=", upper: "+", row: 1},
-    {lower: "", row: 1, width: 35},
-    {lower: "Help", row: 1, x_start: this.num_x_offset, width: 88, 'class': 'small-text help', 'left_offset': 4},
+    {lower: "", row: 1, width: 35, onclick: this.backspace}, // backspace (arrow drawn on drawNonStandardKeys)
+    {lower: "Help", row: 1, x_start: this.num_x_offset, width: 88, 'class': 'small-text help', left_offset: 4, onclick: this.help },
     // Second row
     {lower: "q", upper: "Q", row: 2, x_start: 25},
     {lower: "w", upper: "W", row: 2},
@@ -103,7 +103,7 @@ var VirtualKeyboard = function(objectId) {
     {lower: "5", row: 3},
     {lower: "6", row: 3},
     // Fourth row
-    {lower: "Shift", row: 4, x_start: 15, width: 43, 'class': 'small-text', 'left_offset': 4},
+    {lower: "Shift", row: 4, x_start: 15, width: 43, 'class': 'small-text', left_offset: 4, onclick: this.shift},
     {lower: "z", upper: "Z", row: 4},
     {lower: "x", upper: "X", row: 4},
     {lower: "c", upper: "C", row: 4},
@@ -115,15 +115,15 @@ var VirtualKeyboard = function(objectId) {
     {lower: ".", upper: ">", row: 4},
     {lower: ";", upper: ":", row: 4},
     {lower: "/", upper: "?", row: 4},
-    {lower: "", row: 4, width: 38},
+    {lower: "", row: 4, width: 38, onclick: this.shift}, // Right shift (arrow drawn on drawNonStandardKeys)
     {lower: "1", row: 4, x_start: this.num_x_offset},
     {lower: "2", row: 4},
     {lower: "3", row: 4},
     // Fifth row
-    {lower: "Caps Lock", row: 5, x_start: 15, width: 87, 'class': 'small-text', 'left_offset': 11},
+    {lower: "Caps Lock", row: 5, x_start: 15, width: 87, 'class': 'small-text', 'left_offset': 11, onclick: this.capsLock },
     {lower: "SPACE", row: 5, width: 335, 'class': 'small-text', 'left_offset': 4},
     {lower: "0", row: 5, x_start: this.num_x_offset, width: 57},
-    {lower: "Ok", row: 5, 'class': 'small-text ok', 'left_offset': 3}
+    {lower: "Ok", row: 5, 'class': 'small-text ok', 'left_offset': 3, onclick: this.ok }
   ];
 
   this.s = Snap(objectId);
@@ -176,6 +176,14 @@ VirtualKeyboard.prototype.createSquareKey = function(iKey) {
   _key.transform("t" + this.square_keys[iKey].x + "," + this.square_keys[iKey].y);
 
   this.addKeyHandlers(_key);
+  if (this.square_keys[iKey].onclick) {
+    _key.click(function() { this.square_keys[iKey].onclick; });
+  }
+  else {
+    _key.lower = this.square_keys[iKey].lower;
+    _key.upper = this.square_keys[iKey].upper;
+    _key.click(this.anyKey);
+  }
 };
 
 VirtualKeyboard.prototype.drawSquareKeys = function() {
@@ -204,7 +212,7 @@ VirtualKeyboard.prototype.drawSquareKeys = function() {
 };
 
 VirtualKeyboard.prototype.drawNonStandardKeys = function() {
-  // Draw non-standard keys
+  // Draw non-rectangular shapes
   var enter = this.s.polygon(397, 66, 442, 66, 442, 117, 418, 117, 418, 89, 397, 89);
   enter.transform('t0.5 0.5');
   var enter_text = this.s.text(410, 83, "Ok");
@@ -228,6 +236,30 @@ VirtualKeyboard.prototype.drawNonStandardKeys = function() {
     'class' : 'arrow',
     'transform' : 't410 45'
   });
+};
+
+VirtualKeyboard.prototype.anyKey = function() {
+  console.log(this.lower);
+};
+
+VirtualKeyboard.prototype.shift = function() {
+  console.log('shift pressed');
+};
+
+VirtualKeyboard.prototype.capsLock = function() {
+  console.log('caps pressed');
+};
+
+VirtualKeyboard.prototype.backspace = function() {
+  console.log('backspace pressed');
+};
+
+VirtualKeyboard.prototype.ok = function() {
+  console.log('ok pressed');
+};
+
+VirtualKeyboard.prototype.help = function() {
+  console.log('help pressed');
 };
 
 var keyboard = new VirtualKeyboard("#keyboard");
