@@ -39,12 +39,23 @@
 </head>
 <body>
   <svg id="keyboard" viewBox="0 0 600 200" width="600px" height="200px"></svg>
+  <p><span class="message" id="shift_on" style="display: none">Shift On</span>
+    &nbsp;
+    <span class="message" id="caps_on" style="display: none">Caps Lock On</span>
+  </p>
+  <p><input type="text" id="password"/></p>
   <p class="letter">test</p>
   <p>
     <img src="keyboard.png">
   </p>
 <script type="text/javascript">
-var VirtualKeyboard = function(objectId) {
+var VirtualKeyboard = function(objectId, passwordId, shiftLabelId, capsLabelId) {
+  this.shift_on = false;
+  this.caps_on = false;
+  this.passwordField = document.getElementById(passwordId);
+  this.shiftLabel = document.getElementById(shiftLabelId);
+  this.capsLabel = document.getElementById(capsLabelId);
+
   this.margin = 5;
   this.button_settings = {
     'width': 26,
@@ -126,7 +137,7 @@ var VirtualKeyboard = function(objectId) {
     {lower: "Ok", row: 5, 'class': 'small-text ok', 'left_offset': 3, onclick: this.ok }
   ];
 
-  this.s = Snap(objectId);
+  this.s = Snap('#' + objectId);
   this.s.attr({ 'class': 'letter' });
   this.drawSquareKeys();
   this.drawNonStandardKeys();
@@ -157,6 +168,7 @@ VirtualKeyboard.prototype.createSquareKey = function(iKey) {
   _button.attr({ width : this.square_keys[iKey].width });
 
   var _letter = this.s.text(0, 0, this.square_keys[iKey].lower);
+  this.square_keys[iKey].letter = _letter;
 
   // Reposition text in button
   var left_offset = (this.square_keys[iKey].left_offset ? this.square_keys[iKey].left_offset : 0);
@@ -176,12 +188,13 @@ VirtualKeyboard.prototype.createSquareKey = function(iKey) {
   _key.transform("t" + this.square_keys[iKey].x + "," + this.square_keys[iKey].y);
 
   this.addKeyHandlers(_key);
+
+  _key.keyboard = this;
+  _key.settings = this.square_keys[iKey];
   if (this.square_keys[iKey].onclick) {
-    _key.click(function() { this.square_keys[iKey].onclick; });
+    _key.click(this.square_keys[iKey].onclick);
   }
   else {
-    _key.lower = this.square_keys[iKey].lower;
-    _key.upper = this.square_keys[iKey].upper;
     _key.click(this.anyKey);
   }
 };
@@ -225,7 +238,7 @@ VirtualKeyboard.prototype.drawNonStandardKeys = function() {
   enter_g.attr({ 'class': 'key ok small-text' });
   this.addKeyHandlers(enter_g);
 
-  var shift_arrow = this.s.polygon(5,  6, 0, 10, 5, 3, 10, 10, 5, 6, 5, 16);
+  var shift_arrow = this.s.polygon(5, 6, 0, 10, 5, 3, 10, 10, 5, 6, 5, 16);
   shift_arrow.attr({
     'class' : 'arrow',
     'transform' : 't419 125'
@@ -239,19 +252,34 @@ VirtualKeyboard.prototype.drawNonStandardKeys = function() {
 };
 
 VirtualKeyboard.prototype.anyKey = function() {
-  console.log(this.lower);
+  if (this.keyboard.caps_on && !this.keyboard.shift_on || this.keyboard.shift_on && !this.keyboard.caps_on) {
+    this.keyboard.passwordField.value += this.settings.upper;
+  }
+  else {
+    this.keyboard.passwordField.value += this.settings.lower;
+  }
+
+  if (this.keyboard.shift_on) {
+    this.keyboard.shift_on = false;
+    this.keyboard.shiftLabel.style.setProperty('display', 'none');
+    this.keyboard.toggleKeys();
+  }
 };
 
 VirtualKeyboard.prototype.shift = function() {
-  console.log('shift pressed');
+  this.keyboard.shift_on = !this.keyboard.shift_on;
+  this.keyboard.shiftLabel.style.setProperty('display', (this.keyboard.shift_on ? 'block' : 'none'));
+  this.keyboard.toggleKeys();
 };
 
 VirtualKeyboard.prototype.capsLock = function() {
-  console.log('caps pressed');
+  this.keyboard.caps_on = !this.keyboard.caps_on;
+  this.keyboard.capsLabel.style.setProperty('display', (this.keyboard.caps_on ? 'block' : 'none'));
+  this.keyboard.toggleKeys();
 };
 
 VirtualKeyboard.prototype.backspace = function() {
-  console.log('backspace pressed');
+  this.keyboard.passwordField.value = '';
 };
 
 VirtualKeyboard.prototype.ok = function() {
@@ -262,7 +290,19 @@ VirtualKeyboard.prototype.help = function() {
   console.log('help pressed');
 };
 
-var keyboard = new VirtualKeyboard("#keyboard");
+VirtualKeyboard.prototype.toggleKeys = function() {
+  for(var iKey in this.square_keys) {
+    if ((this.caps_on && !this.shift_on || this.shift_on && !this.caps_on)
+      && this.square_keys[iKey].upper) {
+      this.square_keys[iKey].letter.node.textContent = this.square_keys[iKey].upper;
+    }
+    else {
+      this.square_keys[iKey].letter.node.textContent = this.square_keys[iKey].lower;
+    }
+  }
+}
+
+var keyboard = new VirtualKeyboard('keyboard', 'password', 'shift_on', 'caps_on');
 
 </script>
 
