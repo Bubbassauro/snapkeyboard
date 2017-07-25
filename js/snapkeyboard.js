@@ -87,7 +87,7 @@ var VirtualKeyboard = function(config) {
   ];
 
   this.s = Snap('#' + config.objectId);
-  this.s.attr({ 'class': 'letter' });
+  this.s.attr({ 'class': 'snapkeyboard' });
   this.drawSquareKeys();
   this.drawNonStandardKeys();
 };

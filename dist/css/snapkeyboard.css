@@ -1,4 +1,4 @@
-.letter text {
+.snapkeyboard text {
   font-family: Verdana;
   font-weight: bold;
   color: #006600;
@@ -6,38 +6,38 @@
   cursor: pointer;
   stroke-width: 0; }
 
-.key {
+.snapkeyboard .key {
   fill: #F2F7F1;
   background-color: #F2F7F1;
   border: #88aca0;
   stroke: #88aca0;
   stroke-width: 1px;
   cursor: pointer; }
-  .key .active {
+  .snapkeyboard .key .active {
     font-weight: bold; }
-  .key .not-active {
+  .snapkeyboard .key .not-active {
     font-weight: normal; }
 
-.small-text text {
+.snapkeyboard .small-text text {
   font-size: .75em;
   padding-bottom: 4px; }
 
-.ok rect {
+.snapkeyboard .ok rect {
   fill: #FECB00;
   background-color: #FECB00; }
 
-.ok polygon {
+.snapkeyboard .ok polygon {
   fill: #FECB00;
   background-color: #FECB00; }
-  .ok polygon.arrow {
-    fill: #060;
-    stroke: #060;
+  .snapkeyboard .ok polygon.arrow {
+    fill: #006600;
+    stroke: #006600;
     cursor: pointer; }
 
-polygon.arrow {
-  fill: #060;
-  stroke: #060;
+.snapkeyboard polygon.arrow {
+  fill: #006600;
+  stroke: #006600;
   cursor: pointer; }
 
-.help rect {
+.snapkeyboard .help rect {
   fill: #BDDBB7; }
