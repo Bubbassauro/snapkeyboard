@@ -1,0 +1,54 @@
+.letter text {
+  font-family: Verdana;
+  font-weight: bold;
+  color: #006600;
+  fill: #006600;
+  cursor: pointer;
+  stroke-width: 0;
+}
+
+.key {
+  fill: #F2F7F1;
+  background-color: #F2F7F1;
+  border: #88aca0;
+  stroke: #88aca0;
+  stroke-width: 1px;
+  cursor: pointer;
+  .active {
+    font-weight: bold;
+  }
+  .not-active {
+    font-weight: normal;
+  }
+}
+
+.small-text text {
+  font-size: .75em;
+  padding-bottom: 4px;
+}
+
+.ok {
+  rect {
+    fill: #FECB00;
+    background-color: #FECB00;
+  }
+  polygon {
+    fill: #FECB00;
+    background-color: #FECB00;
+    &.arrow {
+      fill: #060;
+      stroke: #060;
+      cursor: pointer;
+    }
+  }
+}
+
+polygon.arrow {
+  fill: #060;
+  stroke: #060;
+  cursor: pointer;
+}
+
+.help rect {
+  fill: #BDDBB7;
+}
