@@ -1,0 +1,16 @@
+{
+  "name": "snapkeyboard",
+  "version": "1.0.0",
+  "description": "virtual keyboard drawn with Snap.svg",
+  "main": "keyboard.html",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@bitbucket.org/tatihz/snapkeyboard.git"
+  },
+  "author": "Tatiana Hanazaki",
+  "license": "ISC",
+  "homepage": "https://bitbucket.org/tatihz/snapkeyboard#readme",
+  "devDependencies": {
+    "snapsvg": "^0.5.1"
+  }
+}
