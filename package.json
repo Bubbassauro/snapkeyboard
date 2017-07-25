@@ -5,11 +5,11 @@
   "main": "keyboard.html",
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@bitbucket.org/tatihz/snapkeyboard.git"
+    "url": "https://github.com/Bubbassauro/snapkeyboard.git"
   },
   "author": "Tatiana Hanazaki",
   "license": "ISC",
-  "homepage": "https://bitbucket.org/tatihz/snapkeyboard#readme",
+  "homepage": "https://github.com/Bubbassauro/snapkeyboard",
   "devDependencies": {
     "gulp": "^3.9.1",
     "gulp-sass": "^3.1.0",
